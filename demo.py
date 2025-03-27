@@ -14,4 +14,8 @@ s3 = s3fs.S3FileSystem(
 s3store = s3fs.S3Map(root=f'{bucket}/{name}', s3=s3)
 
 data = np.random.random((100, 100))
+# Write
 zarr.save(s3store, data)
+# Read
+z = zarr.open_array(s3store, "r")
+print(z[:])
