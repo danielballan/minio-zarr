@@ -1,3 +1,4 @@
+import asyncio
 import zarr
 import s3fs
 import numpy as np
@@ -5,17 +6,29 @@ import numpy as np
 bucket = "buck"
 name = "sample"
 
-s3 = s3fs.S3FileSystem(
-    client_kwargs={"endpoint_url": "http://localhost:9000"},
-    key="minioadmin",
-    secret="minioadmin",
-    use_ssl=False,
-)
-s3store = s3fs.S3Map(root=f'{bucket}/{name}', s3=s3)
 
 data = np.random.random((100, 100))
-# Write
-zarr.save(s3store, data)
-# Read
-z = zarr.open_array(s3store, "r")
-print(z[:])
+
+
+async def main():
+
+    s3 = s3fs.S3FileSystem(
+        client_kwargs={"endpoint_url": "http://localhost:9000"},
+        key="minioadmin",
+        secret="minioadmin",
+        use_ssl=False,
+        asynchronous=True,
+    )
+    session = await s3.set_session()
+    s3store = s3fs.S3Map(root=f"{bucket}/{name}", s3=s3)
+
+    # Write
+    zarr.save(s3store, data)
+    # Read
+    z = zarr.open_array(s3store)
+    print(z[:])
+
+    await session.close()
+
+
+asyncio.run(main())
