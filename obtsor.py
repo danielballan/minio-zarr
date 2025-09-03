@@ -29,5 +29,5 @@ data = np.random.random((100, 100))
 # Write
 zarr.save(store, data)
 # Read
-# z = zarr.open_array(store, "r")
-# print(z[:])
+z = zarr.open_array(store)
+print(z[:])
