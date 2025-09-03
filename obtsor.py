@@ -12,7 +12,7 @@ else:
 
 
 object_store = S3Store(
-    endpoint="localhost:9000",
+    endpoint="http://localhost:9000",
     access_key_id="minioadmin",
     secret_access_key="minioadmin",
     bucket="buck",
@@ -24,8 +24,10 @@ store = ObjectStore(store=object_store)
 
 # Start with the same example as s3fs
 data = np.random.random((100, 100))
+
+# zarr.create_array(store=store, shape=(100, 100), chunks=(100, 100), dtype="int32")
 # Write
 zarr.save(store, data)
 # Read
-z = zarr.open_array(store, "r")
-print(z[:])
+# z = zarr.open_array(store, "r")
+# print(z[:])
